@@ -1,0 +1,24 @@
+# Prerequisites
+*.d
+
+# Object files
+*.o
+
+# Libraries
+*.a
+
+# Shared objects
+*.so
+*.so.*
+
+# Executables
+*.out
+*.hex
+*.bin
+
+# Build directory
+build
+
+# CLion
+.idea
+cmake-build-debug
