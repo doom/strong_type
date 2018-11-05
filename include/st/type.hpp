@@ -10,28 +10,25 @@
 
 namespace st
 {
-    template <typename T, typename Tag, typename ...Traits>
-    class type : public Traits::template type<type<T, Tag, Traits...>> ...
+    template <typename T>
+    class type_base
     {
     public:
-        using value_type = T;
-        using tag_type = Tag;
-
-        explicit constexpr type(const T &t) : _t(t)
+        explicit constexpr type_base(const T &t) : _t(t)
         {
         }
 
-        explicit constexpr type(T &&t) noexcept(std::is_nothrow_move_constructible_v<T>) : _t(std::move(t))
+        explicit constexpr type_base(T &&t) noexcept(std::is_nothrow_move_constructible_v<T>) : _t(std::move(t))
         {
         }
 
-        constexpr type(const type &) = default;
+        constexpr type_base(const type_base &) = default;
 
-        constexpr type(type &&) noexcept(std::is_nothrow_move_constructible_v<T>) = default;
+        constexpr type_base(type_base &&) noexcept(std::is_nothrow_move_constructible_v<T>) = default;
 
-        constexpr type &operator=(const type &) = default;
+        constexpr type_base &operator=(const type_base &) = default;
 
-        constexpr type &operator=(type &&) noexcept(std::is_nothrow_move_assignable_v<T>) = default;
+        constexpr type_base &operator=(type_base &&) noexcept(std::is_nothrow_move_assignable_v<T>) = default;
 
         constexpr const T &value() const & noexcept
         {
@@ -55,6 +52,18 @@ namespace st
 
     private:
         T _t;
+    };
+
+    template <typename T, typename Tag, typename ...Traits>
+    class type :
+        public Traits::template type<type<T, Tag, Traits...>> ...,
+        public type_base<T>
+    {
+    public:
+        using type_base<T>::type_base;
+
+        using value_type = T;
+        using tag_type = Tag;
     };
 }
 

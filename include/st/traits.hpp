@@ -10,7 +10,7 @@
 
 namespace st
 {
-    namespace details
+    namespace traits
     {
         template <typename T, typename OtherOperandT = T, typename ReturnT = T>
         struct addable : details::this_cast<addable>
@@ -186,105 +186,100 @@ namespace st
                 return unwrap(lhs) >= rhs.value();
             }
         };
+
+        template <typename T>
+        struct arithmetic : addable<T>,
+                            subtractable<T>,
+                            multiplicable<T>,
+                            dividable<T>,
+                            modulable<T>,
+                            incrementable<T>,
+                            decrementable<T>,
+                            equality_comparable<T>,
+                            orderable<T>
+        {
+        };
     }
 
     struct addable
     {
         template <typename T>
-        using type = details::addable<T>;
+        using type = traits::addable<T>;
     };
 
     template <typename OtherOperandT>
     struct addable_with
     {
         template <typename T>
-        using type = details::addable<T, OtherOperandT>;
+        using type = traits::addable<T, OtherOperandT>;
     };
 
     struct subtractable
     {
         template <typename T>
-        using type = details::subtractable<T>;
+        using type = traits::subtractable<T>;
     };
 
     template <typename ReturnT>
     struct subtractable_to
     {
         template <typename T>
-        using type = details::subtractable<T, T, ReturnT>;
+        using type = traits::subtractable<T, T, ReturnT>;
     };
 
     struct multiplicable
     {
         template <typename T>
-        using type = details::multiplicable<T>;
+        using type = traits::multiplicable<T>;
     };
 
     template <typename OtherOperandT>
     struct multiplicable_with
     {
         template <typename T>
-        using type = details::multiplicable<T, OtherOperandT>;
+        using type = traits::multiplicable<T, OtherOperandT>;
     };
 
     struct dividable
     {
         template <typename T>
-        using type = details::dividable<T>;
+        using type = traits::dividable<T>;
     };
 
     struct modulable
     {
         template <typename T>
-        using type = details::modulable<T>;
+        using type = traits::modulable<T>;
     };
 
     struct incrementable
     {
         template <typename T>
-        using type = details::incrementable<T>;
+        using type = traits::incrementable<T>;
     };
 
     struct decrementable
     {
         template <typename T>
-        using type = details::decrementable<T>;
+        using type = traits::decrementable<T>;
     };
 
     struct equality_comparable
     {
         template <typename T>
-        using type = details::equality_comparable<T>;
+        using type = traits::equality_comparable<T>;
     };
 
     struct orderable
     {
         template <typename T>
-        using type = details::orderable<T>;
+        using type = traits::orderable<T>;
     };
-
-    namespace details
-    {
-        template <typename ...Ts>
-        struct inherit : Ts ...
-        {
-        };
-    }
 
     struct arithmetic
     {
         template <typename T>
-        using type = details::inherit<
-            typename addable::template type<T>,
-            typename subtractable::template type<T>,
-            typename multiplicable::template type<T>,
-            typename dividable::template type<T>,
-            typename modulable::template type<T>,
-            typename incrementable::template type<T>,
-            typename decrementable::template type<T>,
-            typename equality_comparable::template type<T>,
-            typename orderable::template type<T>
-        >;
+        using type = traits::arithmetic<T>;
     };
 }
 

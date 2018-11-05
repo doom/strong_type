@@ -9,13 +9,22 @@
 
 namespace st
 {
-    template <typename T>
-    struct is_strong_type : std::false_type
+    namespace traits
     {
-    };
+        template <typename T>
+        struct is_strong_type_helper
+        {
+            template <typename WrappedT>
+            static std::true_type test(const type_base<WrappedT> &);
 
-    template <typename WrappedT, typename Tag, typename ...Traits>
-    struct is_strong_type<type<WrappedT, Tag, Traits...>> : std::true_type
+            static std::false_type test(...);
+
+            using type = decltype(test(std::declval<const T &>()));
+        };
+    }
+
+    template <typename T>
+    struct is_strong_type : traits::is_strong_type_helper<T>::type
     {
     };
 

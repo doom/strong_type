@@ -158,3 +158,43 @@ TEST(strong_type, orderable)
 
     static_assert(position(1) < position(2));
 }
+
+namespace
+{
+    struct with_a_member :
+        public st::type_base<int>,
+        public st::traits::arithmetic<with_a_member>
+    {
+        using st::type_base<int>::type_base;
+
+        constexpr bool is_zero() const noexcept
+        {
+            return value() == 0;
+        }
+    };
+}
+
+TEST(strong_type, custom_members)
+{
+    constexpr with_a_member wam(1);
+
+    static_assert(wam.value() == 1);
+    static_assert(!wam.is_zero());
+    static_assert(with_a_member(1) > with_a_member(-1));
+    static_assert((with_a_member(1) + with_a_member(2)) == with_a_member(3));
+    static_assert((with_a_member(1) - with_a_member(2)) == with_a_member(-1));
+
+    constexpr with_a_member wam2 = wam;
+    static_assert(wam == wam2);
+    static_assert(wam <= wam2);
+    static_assert(wam >= wam2);
+
+    with_a_member wam3(1);
+    with_a_member wam4(2);
+    wam4 = wam3;
+    ASSERT_EQ(wam3, wam4);
+    ++wam4;
+    ASSERT_EQ(wam4, with_a_member(1) + wam3);
+    wam4 = std::move(wam3);
+    ASSERT_EQ(with_a_member(1), wam4);
+}
