@@ -198,3 +198,15 @@ TEST(strong_type, custom_members)
     wam4 = std::move(wam3);
     ASSERT_EQ(with_a_member(1), wam4);
 }
+
+TEST(strong_type, bitwise_manipulable)
+{
+    using bitwise_number = st::type<uint8_t, struct bitwise_number_tag,
+        st::bitwise_manipulable, st::bitwise_orable_with<uint8_t>, st::equality_comparable>;
+
+    static_assert((bitwise_number(1) | bitwise_number(2)) == bitwise_number(3));
+    static_assert((bitwise_number(1) | 2) == bitwise_number(3));
+    static_assert((bitwise_number(1) & bitwise_number(2)) == bitwise_number(0));
+    static_assert(~(~bitwise_number(1)) == bitwise_number(1));
+    static_assert((bitwise_number(45) ^ bitwise_number(212) ^ bitwise_number(45)) == bitwise_number(212));
+}

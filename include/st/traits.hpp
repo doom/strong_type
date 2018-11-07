@@ -199,6 +199,71 @@ namespace st
                             orderable<T>
         {
         };
+
+        template <typename T, typename OtherOperandT = T, typename ReturnT = T>
+        struct bitwise_orable : details::this_cast<bitwise_orable>
+        {
+            friend constexpr ReturnT operator|(const T &lhs, const OtherOperandT &rhs) noexcept
+            {
+                return ReturnT(lhs.value() | unwrap(rhs));
+            }
+
+            template <typename _T = T, typename _Other = OtherOperandT,
+                typename = std::enable_if_t<!std::is_same_v<_T, _Other>>>
+            friend constexpr ReturnT operator|(const OtherOperandT &lhs, const T &rhs) noexcept
+            {
+                return ReturnT(unwrap(lhs) | rhs.value());
+            }
+        };
+
+        template <typename T, typename OtherOperandT = T, typename ReturnT = T>
+        struct bitwise_andable : details::this_cast<bitwise_andable>
+        {
+            friend constexpr ReturnT operator&(const T &lhs, const OtherOperandT &rhs) noexcept
+            {
+                return ReturnT(lhs.value() & unwrap(rhs));
+            }
+
+            template <typename _T = T, typename _Other = OtherOperandT,
+                typename = std::enable_if_t<!std::is_same_v<_T, _Other>>>
+            friend constexpr ReturnT operator&(const OtherOperandT &lhs, const T &rhs) noexcept
+            {
+                return ReturnT(unwrap(lhs) & rhs.value());
+            }
+        };
+
+        template <typename T, typename OtherOperandT = T, typename ReturnT = T>
+        struct bitwise_xorable : details::this_cast<bitwise_xorable>
+        {
+            friend constexpr ReturnT operator^(const T &lhs, const OtherOperandT &rhs) noexcept
+            {
+                return ReturnT(lhs.value() ^ unwrap(rhs));
+            }
+
+            template <typename _T = T, typename _Other = OtherOperandT,
+                typename = std::enable_if_t<!std::is_same_v<_T, _Other>>>
+            friend constexpr ReturnT operator^(const OtherOperandT &lhs, const T &rhs) noexcept
+            {
+                return ReturnT(unwrap(lhs) ^ rhs.value());
+            }
+        };
+
+        template <typename T, typename ReturnT = T>
+        struct bitwise_negatable : details::this_cast<bitwise_negatable>
+        {
+            friend constexpr ReturnT operator~(const T &lhs) noexcept
+            {
+                return ReturnT(~lhs.value());
+            }
+        };
+
+        template <typename T>
+        struct bitwise_manipulable : bitwise_orable<T>,
+                                     bitwise_andable<T>,
+                                     bitwise_xorable<T>,
+                                     bitwise_negatable<T>
+        {
+        };
     }
 
     struct addable
@@ -280,6 +345,57 @@ namespace st
     {
         template <typename T>
         using type = traits::arithmetic<T>;
+    };
+
+    struct bitwise_orable
+    {
+        template <typename T>
+        using type = traits::bitwise_orable<T>;
+    };
+
+    template <typename OtherOperandT>
+    struct bitwise_orable_with
+    {
+        template <typename T>
+        using type = traits::bitwise_orable<T, OtherOperandT>;
+    };
+
+    struct bitwise_andable
+    {
+        template <typename T>
+        using type = traits::bitwise_andable<T>;
+    };
+
+    template <typename OtherOperandT>
+    struct bitwise_andable_with
+    {
+        template <typename T>
+        using type = traits::bitwise_andable<T, OtherOperandT>;
+    };
+
+    struct bitwise_xorable
+    {
+        template <typename T>
+        using type = traits::bitwise_xorable<T>;
+    };
+
+    template <typename OtherOperandT>
+    struct bitwise_xorable_with
+    {
+        template <typename T>
+        using type = traits::bitwise_xorable<T, OtherOperandT>;
+    };
+
+    struct bitwise_negatable
+    {
+        template <typename T>
+        using type = traits::bitwise_negatable<T>;
+    };
+
+    struct bitwise_manipulable
+    {
+        template <typename T>
+        using type = traits::bitwise_manipulable<T>;
     };
 }
 
