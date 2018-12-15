@@ -2,6 +2,7 @@
 ** Created by doom on 26/10/18.
 */
 
+#include <string>
 #include <gtest/gtest.h>
 #include <st/type.hpp>
 #include <st/st.hpp>
@@ -31,6 +32,23 @@ using position = st::type<
     st::orderable
 >;
 
+namespace
+{
+    struct with_a_member :
+        public st::type_base<int>,
+        public st::traits::arithmetic<with_a_member>
+    {
+        using st::type_base<int>::type_base;
+
+        constexpr bool is_zero() const noexcept
+        {
+            return value() == 0;
+        }
+    };
+}
+
+using name = st::type<std::string, struct name_tag>;
+
 TEST(strong_type, is_strong_type)
 {
     static_assert(!st::is_strong_type_v<int>);
@@ -44,6 +62,35 @@ TEST(strong_type, unwrap)
     static_assert(std::is_same_v<decltype(st::unwrap(std::declval<const int &>())), const int &>);
     static_assert(std::is_same_v<decltype(st::unwrap(std::declval<position &&>())), int &&>);
     static_assert(std::is_same_v<decltype(st::unwrap(std::declval<int &&>())), int &&>);
+    static_assert(std::is_same_v<decltype(st::unwrap(std::declval<with_a_member &&>())), int &&>);
+}
+
+template <typename ST, typename WT>
+static inline constexpr bool check_strong_type_triviality_v =
+    (std::is_trivially_copy_constructible_v<ST> == std::is_trivially_copy_constructible_v<WT>) &&
+    (std::is_trivially_move_constructible_v<ST> == std::is_trivially_move_constructible_v<WT>) &&
+    (std::is_trivially_copy_assignable_v<ST> == std::is_trivially_copy_assignable_v<WT>) &&
+    (std::is_trivially_move_constructible_v<ST> == std::is_trivially_move_constructible_v<WT>);
+
+template <typename ST, typename WT>
+static inline constexpr bool check_strong_type_noexceptness_v =
+    (std::is_nothrow_copy_constructible_v<ST> == std::is_nothrow_copy_constructible_v<WT>) &&
+    (std::is_nothrow_move_constructible_v<ST> == std::is_nothrow_move_constructible_v<WT>) &&
+    (std::is_nothrow_copy_assignable_v<ST> == std::is_nothrow_copy_assignable_v<WT>) &&
+    (std::is_nothrow_move_constructible_v<ST> == std::is_nothrow_move_constructible_v<WT>);
+
+TEST(strong_type, triviality)
+{
+    static_assert(check_strong_type_triviality_v<integer, integer::value_type>);
+    static_assert(check_strong_type_triviality_v<name, name::value_type>);
+    static_assert(check_strong_type_triviality_v<with_a_member, int>);
+}
+
+TEST(strong_type, noexceptness)
+{
+    static_assert(check_strong_type_noexceptness_v<integer, integer::value_type>);
+    static_assert(check_strong_type_noexceptness_v<name, name::value_type>);
+    static_assert(check_strong_type_noexceptness_v<with_a_member, int>);
 }
 
 TEST(strong_type, addable)
@@ -157,21 +204,6 @@ TEST(strong_type, orderable)
     static_assert(integer(1) <= integer(2));
 
     static_assert(position(1) < position(2));
-}
-
-namespace
-{
-    struct with_a_member :
-        public st::type_base<int>,
-        public st::traits::arithmetic<with_a_member>
-    {
-        using st::type_base<int>::type_base;
-
-        constexpr bool is_zero() const noexcept
-        {
-            return value() == 0;
-        }
-    };
 }
 
 TEST(strong_type, custom_members)
