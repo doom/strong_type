@@ -5,7 +5,6 @@
 #ifndef STRONG_TYPE_TRAITS_HPP
 #define STRONG_TYPE_TRAITS_HPP
 
-#include <st/details/this_cast.hpp>
 #include <st/unwrap.hpp>
 
 namespace st
@@ -13,7 +12,7 @@ namespace st
     namespace traits
     {
         template <typename T, typename OtherOperandT = T, typename ReturnT = T>
-        struct addable : details::this_cast<addable>
+        struct addable
         {
             friend constexpr ReturnT operator+(const T &lhs, const OtherOperandT &rhs) noexcept
             {
@@ -29,20 +28,20 @@ namespace st
         };
 
         template <typename T, typename OtherOperandT = T, typename ReturnT = T>
-        struct subtractable : details::this_cast<subtractable>
+        struct subtractable
         {
             constexpr ReturnT operator-(const OtherOperandT &other) const noexcept
             {
-                return ReturnT(this_as<T>()->value() - unwrap(other));
+                return ReturnT(static_cast<const T *>(this)->value() - unwrap(other));
             }
         };
 
         template <typename T, typename OtherOperandT = T, typename ReturnT = T>
-        struct multiplicable : details::this_cast<multiplicable>
+        struct multiplicable
         {
             constexpr ReturnT operator*(const OtherOperandT &other) const noexcept
             {
-                return ReturnT(this_as<T>()->value() * unwrap(other));
+                return ReturnT(static_cast<const T *>(this)->value() * unwrap(other));
             }
 
             template <typename _T = T, typename _Other = OtherOperandT,
@@ -54,55 +53,55 @@ namespace st
         };
 
         template <typename T, typename OtherOperandT = T, typename ReturnT = T>
-        struct dividable : details::this_cast<dividable>
+        struct dividable
         {
             constexpr ReturnT operator/(const OtherOperandT &other) const noexcept
             {
-                return ReturnT(this_as<T>()->value() / unwrap(other));
+                return ReturnT(static_cast<const T *>(this)->value() / unwrap(other));
             }
         };
 
         template <typename T, typename OtherOperandT = T, typename ReturnT = T>
-        struct modulable : details::this_cast<modulable>
+        struct modulable
         {
             constexpr ReturnT operator%(const OtherOperandT &other) const noexcept
             {
-                return ReturnT(this_as<T>()->value() % unwrap(other));
+                return ReturnT(static_cast<const T *>(this)->value() % unwrap(other));
             }
         };
 
         template <typename T>
-        struct incrementable : details::this_cast<incrementable>
+        struct incrementable
         {
             constexpr T &operator++() noexcept
             {
-                ++this_as<T>()->value();
-                return *this_as<T>();
+                ++static_cast<T *>(this)->value();
+                return *static_cast<T *>(this);
             }
 
             constexpr const T operator++(int) noexcept
             {
-                T ret(this_as<T>()->value());
+                T ret(static_cast<T *>(this)->value());
 
-                ++(this_as<T>()->value());
+                ++(static_cast<T *>(this)->value());
                 return ret;
             }
         };
 
         template <typename T>
-        struct decrementable : details::this_cast<decrementable>
+        struct decrementable
         {
             constexpr T &operator--() noexcept
             {
-                --this_as<T>()->value();
-                return *this_as<T>();
+                --static_cast<T *>(this)->value();
+                return *static_cast<T *>(this);
             }
 
             constexpr const T operator--(int) noexcept
             {
-                T ret(this_as<T>()->value());
+                T ret(static_cast<T *>(this)->value());
 
-                --(this_as<T>()->value());
+                --(static_cast<T *>(this)->value());
                 return ret;
             }
         };
@@ -201,7 +200,7 @@ namespace st
         };
 
         template <typename T, typename OtherOperandT = T, typename ReturnT = T>
-        struct bitwise_orable : details::this_cast<bitwise_orable>
+        struct bitwise_orable
         {
             friend constexpr ReturnT operator|(const T &lhs, const OtherOperandT &rhs) noexcept
             {
@@ -217,7 +216,7 @@ namespace st
         };
 
         template <typename T, typename OtherOperandT = T, typename ReturnT = T>
-        struct bitwise_andable : details::this_cast<bitwise_andable>
+        struct bitwise_andable
         {
             friend constexpr ReturnT operator&(const T &lhs, const OtherOperandT &rhs) noexcept
             {
@@ -233,7 +232,7 @@ namespace st
         };
 
         template <typename T, typename OtherOperandT = T, typename ReturnT = T>
-        struct bitwise_xorable : details::this_cast<bitwise_xorable>
+        struct bitwise_xorable
         {
             friend constexpr ReturnT operator^(const T &lhs, const OtherOperandT &rhs) noexcept
             {
@@ -249,7 +248,7 @@ namespace st
         };
 
         template <typename T, typename ReturnT = T>
-        struct bitwise_negatable : details::this_cast<bitwise_negatable>
+        struct bitwise_negatable
         {
             friend constexpr ReturnT operator~(const T &lhs) noexcept
             {
