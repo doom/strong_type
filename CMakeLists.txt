@@ -19,10 +19,14 @@ target_sources(strong_type INTERFACE ${STRONG_TYPE_SOURCES})
 
 target_include_directories(strong_type INTERFACE include)
 
-find_package(GTest REQUIRED)
+option(STRONG_TYPE_BUILD_TESTS "Build tests of the strong_type library" OFF)
 
-add_executable(strong_type-tests
-        tests/strong_type-tests.cpp
-        )
+if (STRONG_TYPE_BUILD_TESTS)
+    find_package(GTest REQUIRED)
 
-target_link_libraries(strong_type-tests strong_type GTest::GTest GTest::Main)
+    add_executable(strong_type-tests
+            tests/strong_type-tests.cpp
+            )
+
+    target_link_libraries(strong_type-tests strong_type GTest::GTest GTest::Main)
+endif ()
