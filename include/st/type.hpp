@@ -14,6 +14,10 @@ namespace st
     class type_base
     {
     public:
+        explicit constexpr type_base() : _t()
+        {
+        }
+
         explicit constexpr type_base(const T &t) : _t(t)
         {
         }
