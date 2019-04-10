@@ -1,0 +1,60 @@
+matrix:
+  include:
+    - os: linux
+      dist: xenial
+      language: python
+      cache: pip
+      python: 3.7
+      compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-8', 'cmake']
+      env:
+        - CXX=g++-8
+        - CC=gcc-8
+        - CONAN_COMPILER_VERSION=8
+        - CONAN_LIBCXX_VERSION=libstdc++11
+        - PIP=pip
+
+    - os: linux
+      dist: xenial
+      language: python
+      cache: pip
+      python: 3.7
+      compiler: clang
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-xenial-8']
+          packages: ['clang-8', 'g++-8', 'cmake']
+      env:
+        - CXX=clang++-8
+        - CC=clang-8
+        - CONAN_COMPILER_VERSION=8
+        - CONAN_LIBCXX_VERSION=libstdc++11
+        - PIP=pip
+
+    - os: osx
+      osx_image: xcode10.2
+      compiler: clang
+      env:
+        - CXX=clang++
+        - CC=clang
+        - PIP=pip3
+
+script:
+  - ${CXX} --version
+  - cmake --version
+  - ${PIP} install conan
+  - conan profile new default --detect
+  - |
+    [ -n "${CONAN_COMPILER_VERSION}" ] && conan profile update settings.compiler.version=${CONAN_COMPILER_VERSION} default || true
+  - |
+    [ -n "${CONAN_LIBCXX_VERSION}" ] && conan profile update settings.compiler.libcxx=${CONAN_LIBCXX_VERSION} default || true
+  - conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
+  - mkdir build
+  - cd build
+  - conan install .. --build missing
+  - cmake .. -DSTRONG_TYPE_BUILD_TESTS=ON
+  - make -kj2
+  - ./bin/strong_type-tests

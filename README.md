@@ -1,6 +1,10 @@
 # strong_type
 C++ implementation of strong types
 
+|         Build Status         |      |
+|------------------------------|------|
+| Linux (gcc-8, clang-8) / OSX | [![Build Status](https://travis-ci.com/doom/strong_type.svg?branch=master)](https://travis-ci.com/doom/strong_type) |
+
 ## <a name="table-of-contents"></a>Table of contents
 
 - [Table of contents](#table-of-contents)

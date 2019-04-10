@@ -22,11 +22,12 @@ target_include_directories(strong_type INTERFACE include)
 option(STRONG_TYPE_BUILD_TESTS "Build tests of the strong_type library" OFF)
 
 if (STRONG_TYPE_BUILD_TESTS)
-    find_package(GTest REQUIRED)
+    include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+    conan_basic_setup()
 
     add_executable(strong_type-tests
             tests/strong_type-tests.cpp
             )
 
-    target_link_libraries(strong_type-tests strong_type GTest::GTest GTest::Main)
+    target_link_libraries(strong_type-tests strong_type ${CONAN_LIBS})
 endif ()
