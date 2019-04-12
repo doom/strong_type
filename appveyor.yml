@@ -1,0 +1,29 @@
+version: '{build}'
+
+environment:
+  matrix:
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      platform: x64
+      GENERATOR: Visual Studio 15 2017 Win64
+
+init:
+  - cmake --version
+  - msbuild /version
+
+install:
+  - set PATH=%PATH%;%PYTHON%/Scripts/
+  - pip.exe install conan
+  - conan user
+  - conan --version
+  - conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
+
+before_build:
+  - conan install .. --build missing
+  - mkdir cmake-build-debug
+  - cd cmake-build-debug
+  - cmake ../ -G "%GENERATOR%" -DCMAKE_IGNORE_PATH="C:/Program Files/Git/usr/bin" -DSTRONG_TYPE_BUILD_TESTS=ON
+
+build_script:
+  - cmake --build . --config Debug
+  - cd bin
+  - bin/strong_type-tests.exe
