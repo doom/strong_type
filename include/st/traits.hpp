@@ -39,9 +39,9 @@ namespace st
         template <typename T, typename OtherOperandT = T, typename ReturnT = T>
         struct multiplicable
         {
-            constexpr ReturnT operator*(const OtherOperandT &other) const noexcept
+            friend constexpr ReturnT operator*(const T &lhs, const OtherOperandT &other) noexcept
             {
-                return ReturnT(static_cast<const T *>(this)->value() * unwrap(other));
+                return ReturnT(lhs.value() * unwrap(other));
             }
 
             template <typename _T = T, typename _Other = OtherOperandT,

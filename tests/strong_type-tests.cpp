@@ -242,3 +242,24 @@ TEST(strong_type, bitwise_manipulable)
     static_assert(~(~bitwise_number(1)) == bitwise_number(1));
     static_assert((bitwise_number(45) ^ bitwise_number(212) ^ bitwise_number(45)) == bitwise_number(212));
 }
+
+TEST(strong_type, price_spread)
+{
+    using spread = st::type<
+        double,
+        struct spread_tag,
+        st::arithmetic
+    >;
+
+    using price = st::type<
+        double,
+        struct price_tag,
+        st::arithmetic,
+        st::multiplicable_with<spread>
+    >;
+
+    constexpr price mid(120);
+    constexpr spread sp(0.5);
+    constexpr price pe = mid * (spread{1.0} - sp);
+    static_assert(pe == price{60.0});
+}
