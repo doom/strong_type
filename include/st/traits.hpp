@@ -30,9 +30,9 @@ namespace st
         template <typename T, typename OtherOperandT = T, typename ReturnT = T>
         struct subtractable
         {
-            constexpr ReturnT operator-(const OtherOperandT &other) const noexcept
+            friend constexpr ReturnT operator-(const T &lhs, const OtherOperandT &rhs) noexcept
             {
-                return ReturnT(static_cast<const T *>(this)->value() - unwrap(other));
+                return ReturnT(lhs.value() - unwrap(rhs));
             }
         };
 
@@ -55,35 +55,35 @@ namespace st
         template <typename T, typename OtherOperandT = T, typename ReturnT = T>
         struct dividable
         {
-            constexpr ReturnT operator/(const OtherOperandT &other) const noexcept
+            friend constexpr ReturnT operator/(const T &lhs, const OtherOperandT &rhs) noexcept
             {
-                return ReturnT(static_cast<const T *>(this)->value() / unwrap(other));
+                return ReturnT(lhs.value() / unwrap(rhs));
             }
         };
 
         template <typename T, typename OtherOperandT = T, typename ReturnT = T>
         struct modulable
         {
-            constexpr ReturnT operator%(const OtherOperandT &other) const noexcept
+            friend constexpr ReturnT operator%(const T &lhs, const OtherOperandT &rhs) noexcept
             {
-                return ReturnT(static_cast<const T *>(this)->value() % unwrap(other));
+                return ReturnT(lhs.value() % unwrap(rhs));
             }
         };
 
         template <typename T>
         struct incrementable
         {
-            constexpr T &operator++() noexcept
+            friend constexpr T &operator++(T &t) noexcept
             {
-                ++static_cast<T *>(this)->value();
-                return *static_cast<T *>(this);
+                ++t.value();
+                return t;
             }
 
-            constexpr const T operator++(int) noexcept
+            friend constexpr const T operator++(T &t, int) noexcept
             {
-                T ret(static_cast<T *>(this)->value());
+                T ret(t);
 
-                ++(static_cast<T *>(this)->value());
+                ++t.value();
                 return ret;
             }
         };
@@ -91,17 +91,17 @@ namespace st
         template <typename T>
         struct decrementable
         {
-            constexpr T &operator--() noexcept
+            friend constexpr T &operator--(T &t) noexcept
             {
-                --static_cast<T *>(this)->value();
-                return *static_cast<T *>(this);
+                --t.value();
+                return t;
             }
 
-            constexpr const T operator--(int) noexcept
+            friend constexpr const T operator--(T &t, int) noexcept
             {
-                T ret(static_cast<T *>(this)->value());
+                T ret(t);
 
-                --(static_cast<T *>(this)->value());
+                --t.value();
                 return ret;
             }
         };
