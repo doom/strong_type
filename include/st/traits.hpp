@@ -310,6 +310,20 @@ namespace st
         using type = traits::dividable<T>;
     };
 
+    template <typename OtherOperandT>
+    struct dividable_by
+    {
+        template <typename T>
+        using type = traits::dividable<T, OtherOperandT>;
+    };
+
+    template <typename ReturnT>
+    struct dividable_to
+    {
+        template <typename T>
+        using type = traits::dividable<T, T, ReturnT>;
+    };
+
     struct modulable
     {
         template <typename T>

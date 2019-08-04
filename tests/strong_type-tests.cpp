@@ -21,7 +21,9 @@ using speed = st::type<
     struct speed_tag,
     st::addable,
     st::subtractable,
-    st::multiplicable_with<acceleration>
+    st::multiplicable_with<acceleration>,
+    st::dividable_by<int>,
+    st::dividable_to<acceleration>
 >;
 
 using position = st::type<
@@ -118,6 +120,10 @@ TEST(strong_type, multiplicable)
 TEST(strong_type, dividable)
 {
     static_assert((integer(4) / integer(2)).value() == integer(2).value());
+
+    static_assert((speed(4) / 2).value() == speed(2).value());
+    static_assert(std::is_same_v<decltype(speed(4) / speed(2)), acceleration>);
+    static_assert((speed(4) / speed(2)).value() == acceleration(2).value());
 }
 
 TEST(strong_type, modulable)

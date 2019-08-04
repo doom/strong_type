@@ -153,6 +153,8 @@ The table below describes the built-in traits that can be applied to a given str
 | `multiplicable`           | Two `T` objects can be multiplied to obtain a new `T`.       |
 | `multiplicable_with<U>`   | A `T` object can be multiplied with a `U` object to obtain a new `T`. |
 | `dividable`               | A `T` object can be divided by another `T` object to obtain a new `T`. |
+| `dividable_by<U>`         | A `T` object can be divided by a `U` object to obtain a new `T`. |
+| `dividable_to<U>`         | A `T` object can be divided by another `T` object to obtain a new `U`. |
 | `modulable`               | A `T` object can be moduled from another `T` object to obtain a new `T`. |
 | `incrementable`           | A `T` object can be pre-incremented and post-incremented.    |
 | `decrementable`           | A `T` object can be pre-decremented and post-decremented.    |
