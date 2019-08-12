@@ -5,6 +5,8 @@
 #ifndef STRONG_TYPE_TRAITS_HPP
 #define STRONG_TYPE_TRAITS_HPP
 
+#include <type_traits>
+#include <functional>
 #include <st/unwrap.hpp>
 
 namespace st
@@ -263,6 +265,11 @@ namespace st
                                      bitwise_negatable<T>
         {
         };
+
+        template <typename T>
+        struct hashable
+        {
+        };
     }
 
     struct addable
@@ -409,6 +416,33 @@ namespace st
     {
         template <typename T>
         using type = traits::bitwise_manipulable<T>;
+    };
+
+    struct hashable
+    {
+        template <typename T>
+        using type = traits::hashable<T>;
+    };
+}
+
+namespace st::details
+{
+    template <typename T, typename>
+    using fst = T;
+}
+
+namespace std
+{
+    template <typename T, typename ...Ts>
+    struct hash<st::details::fst<
+        st::type<T, Ts...>,
+        std::enable_if_t<std::is_base_of_v<st::traits::hashable<st::type<T, Ts...>>, st::type<T, Ts...>>>
+    >>
+    {
+        auto operator()(const st::type<T, Ts...> &t) const
+        {
+            return std::hash<T>()(t.value());
+        }
     };
 }
 

@@ -11,7 +11,8 @@ using integer = st::type<
     int,
     struct integer_tag,
     st::arithmetic,
-    st::addable_with<int>
+    st::addable_with<int>,
+    st::hashable
 >;
 
 using acceleration = st::type<int, struct acceleration_tag>;
@@ -268,4 +269,12 @@ TEST(strong_type, price_spread)
     constexpr spread sp(0.5);
     constexpr price pe = mid * (spread{1.0} - sp);
     static_assert(pe == price{60.0});
+}
+
+TEST(strong_type, hashable)
+{
+    auto hasher = std::hash<integer>();
+    auto underlying_hasher = std::hash<integer::value_type>();
+
+    ASSERT_EQ(underlying_hasher(1), hasher(integer(1)));
 }

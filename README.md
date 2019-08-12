@@ -169,3 +169,4 @@ The table below describes the built-in traits that can be applied to a given str
 | `bitwise_xorable_with<U>` | A `T` object can be bitwise `XOR`-ed with a `U` object to obtain a new `T`. |
 | `bitwise_negatable`       | A `T` object can be bitwise negated (`NOT`) to obtain a new `T`. |
 | `bitwise_manipulable`     | Shorthand trait for `bitwise_orable`,`bitwise_orable_with`, `bitwise_andable`, `bitwise_andable_with`, `bitwise_xorable`, `bitwise_xorable_with`, `bitwise_negatable` and `bitwise_manipulable`. |
+| `hashable`                | A `T` object can be hashed using `std::hash` (provided that its underlying type can be hashed using `std::hash`). |
