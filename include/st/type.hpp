@@ -14,6 +14,12 @@ namespace st
     class type_base
     {
     public:
+        template<typename ... Args>
+        explicit constexpr type_base(Args &&... args) : _t(std::forward<Args>(args)...)
+        {
+
+        }
+        
         explicit constexpr type_base() : _t()
         {
         }
